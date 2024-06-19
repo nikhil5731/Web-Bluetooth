@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 function App() {
-  const [deviceName, setDeviceName] = useState('');
+  const [deviceName, setDeviceName] = useState("");
   const [batteryLevel, setBatteryLevel] = useState(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const connectBluetooth = async () => {
-    setError('');
+    setError("");
     try {
       const device = await navigator.bluetooth.requestDevice({
-        filters: [{ services: ['battery_service'] }]
+        acceptAllDevices: true,
+        optionalServices: ["battery_service"],
       });
 
-      setDeviceName(device.name || 'Unknown Device');
+      setDeviceName(device.name || "Unknown Device");
 
       const server = await device.gatt.connect();
-      const service = await server.getPrimaryService('battery_service');
-      const characteristic = await service.getCharacteristic('battery_level');
-      const value = await characteristic.readValue();
-      setBatteryLevel(value.getUint8(0));
+      console.log("Connected to the GATT server of the device:", server);
     } catch (err) {
-      setError('Failed to connect to th e device. Make sure it supports Bluetooth and battery service.');
+      setError(
+        "Failed to connect to the device. Make sure it supports Bluetooth and battery service."
+      );
     }
   };
 
