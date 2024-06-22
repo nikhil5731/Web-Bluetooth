@@ -1,54 +1,62 @@
 import React, { useState } from "react";
-import "./App.css";
 
 function App() {
-  const [deviceName, setDeviceName] = useState("");
-  const [batteryLevel, setBatteryLevel] = useState(null);
-  const [error, setError] = useState("");
+  const [devices, setDevices] = useState([]);
 
-  const connectBluetooth = async () => {
-    setError("");
+  const scanForDevices = async () => {
     try {
-      const device = await navigator.bluetooth.requestDevice({
+      const options = {
         acceptAllDevices: true,
         optionalServices: ["battery_service"],
-      });
+      };
 
-      setDeviceName(device.name || "Unknown Device");
+      console.log("Requesting Bluetooth device...");
+      const device = await navigator.bluetooth.requestDevice(options);
 
+      console.log("Connecting to GATT Server...");
       const server = await device.gatt.connect();
-      console.log("Connected to the GATT server of the device:", server);
-    } catch (err) {
-      setError(
-        "Failed to connect to the device. Make sure it supports Bluetooth and battery service."
-      );
+
+      console.log("Getting Battery Service...");
+      const service = await server.getPrimaryService("battery_service");
+
+      console.log("Getting Battery Level Characteristic...");
+      const characteristic = await service.getCharacteristic("battery_level");
+
+      console.log("Reading Battery Level...");
+      const value = await characteristic.readValue();
+      const batteryLevel = value.getUint8(0);
+
+      setDevices((prevDevices) => [
+        ...prevDevices,
+        {
+          name: device.name,
+          id: device.id,
+          batteryLevel: batteryLevel,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error:", error);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md text-center">
-        <h1 className="text-2xl font-bold mb-4">Bluetooth Battery Level</h1>
-        <button
-          onClick={connectBluetooth}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Connect to Bluetooth Device
-        </button>
-        {deviceName && (
-          <div className="mt-4">
-            <p className="text-lg">Device: {deviceName}</p>
-            {batteryLevel !== null && (
-              <p className="text-lg">Battery Level: {batteryLevel}%</p>
-            )}
-          </div>
-        )}
-        {error && (
-          <div className="mt-4 text-red-500">
-            <p>{error}</p>
-          </div>
-        )}
-      </div>
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+      <h1 className="text-2xl font-bold mb-4">Bluetooth Device Scanner</h1>
+      <button
+        onClick={scanForDevices}
+        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Scan for Bluetooth Devices
+      </button>
+      <ul className="mt-4 w-full max-w-md">
+        {devices.map((device, index) => (
+          <li key={index} className="bg-white shadow-md rounded p-4 mb-4">
+            <p className="font-semibold">Name: {device.name}</p>
+            <p>ID: {device.id}</p>
+            <p>Battery Level: {device.batteryLevel}%</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
