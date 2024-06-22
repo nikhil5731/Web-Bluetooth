@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Web-Bluetooth/static/css/main.dca4881b.css",
+    "main.js": "/Web-Bluetooth/static/js/main.1bb60f36.js",
+    "index.html": "/Web-Bluetooth/index.html",
+    "main.dca4881b.css.map": "/Web-Bluetooth/static/css/main.dca4881b.css.map",
+    "main.1bb60f36.js.map": "/Web-Bluetooth/static/js/main.1bb60f36.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.dca4881b.css",
+    "static/js/main.1bb60f36.js"
+  ]
+}
