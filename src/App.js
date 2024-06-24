@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 
 function App() {
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState({});
   const [error, setError] = useState("");
+  const [serviceID, setServiceID] = useState("");
+  const [characteristicID, setCharacteristicID] = useState("");
 
-  let serviceID;
-  let characteristicID;
+  const handleChange = (event) => {
+    if (event.target.name === "serviceID") {
+      setServiceID(event.target.value);
+    } else if (event.target.name === "characteristicID") {
+      setCharacteristicID(event.target.value);
+    }
+  };
 
   const scanForDevices = async () => {
     try {
@@ -38,17 +45,43 @@ function App() {
       console.log(`Value: ${percent}%`);
     } catch (error) {
       console.log("Error:", error);
+      setError(error);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
+    <div className="h-screen w-screen bg-gray-300 flex flex-col justify-center gap-3 items-center p-4">
+      <input
+        type="text"
+        name="serviceID"
+        onChange={handleChange}
+        className="py-4 px-3 rounded-xl outline-none w-[30%]"
+        placeholder="Enter ServiceID"
+      />
+      <input
+        type="text"
+        name="characteristicID"
+        onChange={handleChange}
+        className="py-4 px-3 rounded-xl outline-none w-[30%]"
+        placeholder="Enter CharacteristicID"
+      />
       <button
         className="bg-blue-500 p-5 rounded-xl text-white font-bold"
         onClick={scanForDevices}
       >
         Scan for bluetooth
       </button>
+      {devices?.gatt?.connected && (
+        <div className="text-blue-900 font-bold text-xl">
+          Connetion Established!
+        </div>
+      )}
+
+      {error && (
+        <div className="text-red-500 font-bold text-xl">
+          Some Error Occured, Check console and Try Again!
+        </div>
+      )}
     </div>
   );
 }
