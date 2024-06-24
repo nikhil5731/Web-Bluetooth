@@ -2,61 +2,53 @@ import React, { useState } from "react";
 
 function App() {
   const [devices, setDevices] = useState([]);
+  const [error, setError] = useState("");
+
+  let serviceID;
+  let characteristicID;
 
   const scanForDevices = async () => {
     try {
+      setError("");
       const options = {
         acceptAllDevices: true,
-        optionalServices: ["battery_service"],
       };
 
       console.log("Requesting Bluetooth device...");
       const device = await navigator.bluetooth.requestDevice(options);
+      setDevices(device);
 
-      console.log("Connecting to GATT Server...");
-      const server = await device.gatt.connect();
+      console.log("Establishing Connection...");
+      const connection = await device.gatt.connect();
 
-      console.log("Getting Battery Service...");
-      const service = await server.getPrimaryService("battery_service");
+      console.log("Getting Service...");
+      const service = await connection.getPrimaryService(serviceID);
 
-      console.log("Getting Battery Level Characteristic...");
-      const characteristic = await service.getCharacteristic("battery_level");
+      console.log("Getting Characteristics...");
+      const characteristics = await service.getCharacteristics(
+        characteristicID
+      );
 
-      console.log("Reading Battery Level...");
-      const value = await characteristic.readValue();
-      const batteryLevel = value.getUint8(0);
+      console.log("Reading Value...");
+      const value = await characteristics.readValue();
 
-      setDevices((prevDevices) => [
-        ...prevDevices,
-        {
-          name: device.name,
-          id: device.id,
-          batteryLevel: batteryLevel,
-        },
-      ]);
+      console.log("Converting buffer...");
+      const percent = value.getUint8(0);
+
+      console.log(`Value: ${percent}%`);
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Error:", error);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-4">
-      <h1 className="text-2xl font-bold mb-4">Bluetooth Device Scanner</h1>
       <button
+        className="bg-blue-500 p-5 rounded-xl text-white font-bold"
         onClick={scanForDevices}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        Scan for Bluetooth Devices
+        Scan for bluetooth
       </button>
-      <ul className="mt-4 w-full max-w-md">
-        {devices.map((device, index) => (
-          <li key={index} className="bg-white shadow-md rounded p-4 mb-4">
-            <p className="font-semibold">Name: {device.name}</p>
-            <p>ID: {device.id}</p>
-            <p>Battery Level: {device.batteryLevel}%</p>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
