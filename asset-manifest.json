@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/Web-Bluetooth/static/css/main.dca4881b.css",
-    "main.js": "/Web-Bluetooth/static/js/main.1bb60f36.js",
+    "main.css": "/Web-Bluetooth/static/css/main.a6be1861.css",
+    "main.js": "/Web-Bluetooth/static/js/main.de4e1ea5.js",
     "index.html": "/Web-Bluetooth/index.html",
-    "main.dca4881b.css.map": "/Web-Bluetooth/static/css/main.dca4881b.css.map",
-    "main.1bb60f36.js.map": "/Web-Bluetooth/static/js/main.1bb60f36.js.map"
+    "main.a6be1861.css.map": "/Web-Bluetooth/static/css/main.a6be1861.css.map",
+    "main.de4e1ea5.js.map": "/Web-Bluetooth/static/js/main.de4e1ea5.js.map"
   },
   "entrypoints": [
-    "static/css/main.dca4881b.css",
-    "static/js/main.1bb60f36.js"
+    "static/css/main.a6be1861.css",
+    "static/js/main.de4e1ea5.js"
   ]
 }
